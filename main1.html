@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Facturas</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="main1.css">
+
+  <!-- Librería XLSX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-light">
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">Registro de Facturas</h2>
+
+    <!-- Nav Tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#LAVANDERIA">Lavandería</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#LOGISTICA">Logística</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#UDP">UDP</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#ESTAMPADO">Estampado</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#COMERCIAL">Comercial</button></li>
+    </ul>
+
+    <!-- Contenido dinámico -->
+    <div class="tab-content mt-3" id="myTabContent"></div>
+
+    <!-- Botón exportar -->
+    <div class="d-flex justify-content-end mt-4">
+      <button class="btn btn-info" id="btnExportar">📥 Exportar a Excel</button>
+    </div>
+  </div>
+
+  <!-- Script principal -->
+  <script src="main1.js"></script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
