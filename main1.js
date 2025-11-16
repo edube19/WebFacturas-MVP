@@ -6,6 +6,8 @@ const usuariosPorCentro = {
   "ESTAMPADO": { usuario: "LUISA", aprueba: "LUISA" }
 };
 
+//cambio
+
 let kilometraje_inicio = 7500;
 let kilometraje_actual = kilometraje_inicio;
 
