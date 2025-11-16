@@ -343,61 +343,99 @@ document.getElementById("btnExportar").addEventListener("click", () => {
     const centro = tabla.dataset.centro;
     const filas = tabla.querySelectorAll("tbody tr");
 
-    // 1. Definir los nuevos encabezados en el orden solicitado (17 columnas)
+    // 1. Definir los nuevos encabezados en el orden solicitado (28 columnas)
     const data = [[
-      "N° VALE", 
-      "Fecha", 
-      "Usuario", 
-      "Centro de costo", // <-- Nuevo: Lo obtenemos de 'centro'
+      "N°",                      // (Nuevo)
+      "N° VALE",
+      "Fecha",
+      "Usuario",
+      "Centro de costo",
       "Aprueba",
-      "Hora Inicio", 
-      "T. Espera", 
-      "Origen",          
-      "Hora Final",      
-      "Destino",         
-      "Kilometraje acumulado", 
-      "Distancia (kilometraje)", // <-- Es la columna 'Km'
-      "Tiempo Total",    // <-- Usaremos la columna 'T. Total'
-      "Tipo", 
-      "Peaje (S/.)", 
-      "Ruta (S/.)", 
-      "Total", 
+      "Tiempo de espera Origen", // (Nuevo)
+      "Hora Inicio",
+      "T. Espera",               // (Original, se mantiene aquí)
+      "Origen",
+      "Direccion origen",        // (Nuevo)
+      "Distrito origen",         // (Nuevo)
+      "Kilometraje Origen",      // (Nuevo)
+      "Hora Final",
+      "Tiempo espera Destino",   // (Nuevo)
+      "Destino",
+      "Dirección destino",       // (Nuevo)
+      "Distrito Destino",        // (Nuevo)
+      "Kilometraje acumulado",   // (KM Final)
+      "Distancia (kilometraje)", // (KM del viaje)
+      "Tiempo total ruta",       // (Nuevo)
+      "Tiempo total espera",     // (Nuevo)
+      "Tiempo Total",
+      "Tipo de servicio",        // (Renombrado)
+      "Descripción Servicio",    // (Nuevo)
+      "Peaje",
+      "Ruta",
+      "Total",
     ]];
 
+    // Variables para la lógica secuencial POR PESTAÑA
+    let contadorFila = 1;
+    let kmOrigenSiguiente = kilometraje_inicio; // Usa el valor global inicial
+
     filas.forEach(tr => {
-      // Obtenemos todos los <td> (15 columnas en total)
+      // Obtenemos todos los <td> (15 columnas en la tabla HTML)
       const celdas = Array.from(tr.querySelectorAll("td")).map(td => td.textContent.trim());
+
+      // --- Limpieza de valores ---
+      const peajeSinUnidad = celdas[11].replace('S/', '').trim();
+      const rutaSinUnidad = celdas[12].replace('S/', '').trim();
+      const totalSoles = celdas[13].replace('S/', '').trim();
+      const kmSinUnidad = celdas[14].trim(); // Distancia (kilometraje)
+
+      // --- Lógica de N° y Kilometraje ---
       
-      // Limpieza de valores con formato (quitamos "S/")
-      const peajeSinUnidad = celdas[11].replace('S/', '').trim(); 
-      const rutaSinUnidad = celdas[12].replace('S/', '').trim();   
-      const totalSoles = celdas[13].replace('S/', '').trim();      
-      const kmSinUnidad = celdas[14].trim();                     
+      // 1. N°: Usamos el contador de fila
+      const nFila = contadorFila++;
       
-      // Valor del Kilometraje Acumulado (desde el data-km del <tr>)
+      // 2. Kilometraje:
+      //    kmAcumulado = KM Final de esta fila
+      //    kmOrigenActual = KM Origen de esta fila (que fue el final de la anterior)
       const kmAcumulado = tr.getAttribute("data-km") || "0";
+      const kmOrigenActual = kmOrigenSiguiente;
       
-      // 2. Reconstruir la fila en el nuevo orden solicitado
+      // Preparamos el 'kmOrigenSiguiente' para la *próxima* iteración
+      // Será el KM Final (acumulado) de la fila actual
+      kmOrigenSiguiente = parseFloat(kmAcumulado) || kmOrigenActual;
+
+      // 2. Reconstruir la fila en el nuevo orden solicitado (28 columnas)
       const celdasFinal = [
-        celdas[0],   // N° VALE
-        celdas[1],   // Fecha
-        celdas[2],   // Usuario
-        centro,      // Centro de costo (tomado del nombre del centro/pestaña)
-        celdas[3],   // Aprueba
-        celdas[4],   // Hora Inicio
-        celdas[5],   // T. Espera
-        celdas[8],   // Origen
-        celdas[7],   // Hora Final
-        celdas[9],   // Destino
-        kmAcumulado, // Kilometraje acumulado
-        kmSinUnidad, // Distancia (kilometraje) (Km)
-        celdas[6],   // Tiempo Total (T. Total)
-        celdas[10],  // Tipo
-        peajeSinUnidad, // Peaje
-        rutaSinUnidad,  // Ruta
-        totalSoles      // Total
+        nFila,                            // 1. N°
+        celdas[0],                        // 2. N° VALE
+        celdas[1],                        // 3. Fecha
+        celdas[2],                        // 4. Usuario
+        centro,                           // 5. Centro de costo
+        celdas[3],                        // 6. Aprueba
+        "",                               // 7. Tiempo de espera Origen (Vacio)
+        celdas[4],                        // 8. Hora Inicio
+        celdas[5],                        // 9. T. Espera
+        celdas[8],                        // 10. Origen
+        "SANTA ANITA",                    // 11. Direccion origen (Valor fijo)
+        "SANTA ANITA",                    // 12. Distrito origen (Valor fijo)
+        kmOrigenActual.toFixed(1),        // 13. Kilometraje Origen (Lógica)
+        celdas[7],                        // 14. Hora Final
+        "",                               // 15. Tiempo espera Destino (Vacio)
+        celdas[9],                        // 16. Destino
+        "",                               // 17. Dirección destino (Vacio)
+        "",                               // 18. Distrito Destino (Vacio)
+        kmAcumulado,                      // 19. Kilometraje acumulado (KM Final)
+        kmSinUnidad,                      // 20. Distancia (kilometraje)
+        celdas[6],                        // 21. Tiempo total ruta (Igual a T. Total)
+        celdas[5],                        // 22. Tiempo total espera (Valor de T. Espera)
+        celdas[6],                        // 23. Tiempo Total
+        celdas[10],                       // 24. Tipo de servicio (era "Tipo")
+        "MERCADERIA",                     // 25. Descripción Servicio (Valor fijo)
+        peajeSinUnidad,                   // 26. Peaje
+        rutaSinUnidad,                    // 27. Ruta
+        totalSoles                        // 28. Total
       ];
-      
+
       data.push(celdasFinal);
     });
 
